@@ -1,10 +1,11 @@
-# 1. 장고 프로젝트 생성
+# 1. 장고 프로젝트(mychatsite) 생성
 ## 1.1. 장고 프로젝트를 실행할 디렉토리로 이동합니다.
 ```
 (chat_env) C:\Users\saint\GroupProject>cd step1
 ```
 
 ## 1.2 장고 프로젝트를 django-admin startproject "프로젝트명" 으로 생성
+프로젝트명으로 mychatsite를 사용하여 생성
 ```
 (chat_env) C:\Users\saint\GroupProject\step1>django-admin startproject mychatsite
 
@@ -56,7 +57,7 @@ Quit the server with CTRL-BREAK.
 [09/Sep/2020 13:51:07] "GET /static/admin/fonts/Roboto-Bold-webfont.woff HTTP/1.1" 200 82564
 [09/Sep/2020 13:51:07] "GET /static/admin/fonts/Roboto-Light-webfont.woff HTTP/1.1" 200 81348
 ```
-# 2. 장고 어플리케이션(App) 생성
+# 2. 장고 어플리케이션(chatapp) 생성
 ```
 (chat_env) C:\Users\saint\GroupProject\step1\mychatsite>python manage.py startapp chatapp
 
@@ -70,20 +71,82 @@ Quit the server with CTRL-BREAK.
                2개 파일                 557 바이트
                4개 디렉터리  264,305,500,160 바이트 남음
 ```
-## 2.1 장고 어플리케이션(App)에서 views.py파일에 페이지 등록
-**views.py**
+## 2.1 장고 어플리케이션(chatapp)에서 views.py파일에 페이지 등록
+**mychatsite\chatapp\views.py**
 ```
 from django.http import HttpResponse
+from django.shortcuts import render
+from django.template import loader
+
 
 # Create your views here.
- 
-def index(request):
-    return HttpResponse("<h1>Hello, World!</h1>")
-```
+context = {}
 
-# 3. 프로젝트에 어플리케이션(App) 연결
-## 3.1 settings.py에 어플리케이션(App) 등록
-**settings.py**
+# def index(request):
+#     msg = '박형식 홈페이지'
+#     return render(request, 'chatapp/index.html', {'message': msg})
+
+def index(request):
+    template = loader.get_template('chatapp/base_contents_kr.html')
+#    template = loader.get_template('base_contents.html')
+    context = {
+#         'login_success' : False,
+#         'latest_question_list': "test",
+    }
+    return HttpResponse(template.render(context, request))
+
+def chat_home(request):
+    template = loader.get_template('chatapp/chat_home_screen.html')
+    context = {
+        'login_success' : False,
+        'initMessages' : ["아크위드 채팅 홈페이지에 오신것을 환영합니다",
+                          "아크위드 홈페이지 설명 챗봇이 회사의  vision, mission, 제품, 서비스, 주요기술, 연락처에 대해 답변합니다."]
+    }
+    return HttpResponse(template.render(context, request))
+
+def popup_chat_home(request):
+    template = loader.get_template('chatapp/popup_chat_home_screen.html')
+    context = {
+        'login_success' : False,
+        'initMessages' : ["아크위드 채팅 홈페이지에 오신것을 환영합니다",
+                          "아크위드 홈페이지 설명 챗봇이 회사의  vision, mission, 제품, 서비스, 주요기술, 연락처에 대해 답변합니다."]
+    }
+    return HttpResponse(template.render(context, request))
+
+def call_chatbot(request):
+    if request.method == 'POST':
+        if request.is_ajax():
+            userID = request.POST['user']
+            sentence = request.POST['message']
+            # logger.debug("question[{}]".format(sentence))
+            # answer = clean_up_sentence(sentence)
+            # answer = bot.response(sentence, userID)
+            # answer = bot.get_answer(sentence, userID)
+            answer = sentence
+            # logger.debug("answer[{}]".format(answer))
+            return HttpResponse(answer)
+     
+    return render(request)
+
+```
+## 2.2 장고 어플리케이션(chatapp)에 urls.py파일 생성
+**mychatsite\chatapp\urls.py**
+```
+from django.urls import path
+
+from . import views
+
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('chat_home', views.chat_home, name='chat_home'),
+    path('popup_chat_home', views.popup_chat_home, name='popup_chat_home'),
+    path('call_chatbot', views.call_chatbot, name='call_chatbot'),
+]
+```
+# 3. 프로젝트(mychatsite)에 어플리케이션(chatapp) 연결
+## 3.1 settings.py에 어플리케이션(chatapp) 등록
+**mychatsite\mychatsite\settings.py**
 ```
 ......
 ...............
@@ -97,25 +160,47 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 #  여기에 생성한 chatapp 어플리케이션 이름 등재
-    'chatapp',
+    'chatapp.apps.ChatappConfig',
 ]
+
+# Templates 디렉토리 위치 등록
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+        # Template에서 사용하는 STATIC 파일관련 설정 
+            'builtins': ['django.contrib.staticfiles.templatetags.staticfiles'],
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/2.0/howto/static-files/
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+
 .............
 ................
 ```
 
-# 3.2 urls.py에 어플리케이션(App)의 views.py function 등록
-**urls.py**
-=======================================
+# 3.2 프로젝트(mychatsite)의 urls.py에 어플리케이션(chatapp)의 urls.py 등록
+**mychatsite\mychatsite\urls.py**
 ```
+from django.urls import include, path
 from django.contrib import admin
-from django.urls import path
-# 어플리케이션(App)의 views.py 임포트
-from chatapp import views
 
 urlpatterns = [
+    path('', include('chatapp.urls')),
+    path('chatapp/', include('chatapp.urls')),
     path('admin/', admin.site.urls),
-# 어플리케이션(App)의 views.py function 추가
-    path('', views.index),
 ]
 ```
-=======================================
