@@ -61,7 +61,8 @@ def call_chatbot(request):
             logger.debug("question[{}]".format(sentence))
 #            answer = clean_up_sentence(sentence)
 #             answer = bot.response(sentence, userID)
-            answer = bot.get_answer(sentence, userID)
+            # answer = bot.get_answer(sentence, userID)
+            answer = sentence
             #bytesThing = answer.encode(encoding='UTF-8')
             #newStringThing = bytesThing.decode(encoding='UTF-8')
             logger.debug("answer[{}]".format(answer))

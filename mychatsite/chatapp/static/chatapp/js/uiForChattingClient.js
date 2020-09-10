@@ -78,8 +78,8 @@ $.ajax({
     },
     error: function(xhr, status, error){
 		// 에코로 대체
-		processResponse(parseCommands(data));
-		//alert('oops? Status = ' + status + ', error message = ' + error + "\nResponse = " + xhr.responseText);
+		//processResponse(parseCommands(data));
+		alert('oops? Status = ' + status + ', error message = ' + error + "\nResponse = " + xhr.responseText);
     }
   });
 }
