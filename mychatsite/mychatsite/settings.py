@@ -34,13 +34,14 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'chatapp.apps.ChatappConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+#  여기에 생성한 chatapp 어플리케이션 이름 등재
+    'chatapp.apps.ChatappConfig',
 ]
 
 MIDDLEWARE = [
@@ -125,6 +126,4 @@ USE_TZ = True
 #STATIC_ROOT = '/home/ubuntu/arkwithsite/static'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-#STATIC_ROOT = ''
-
 STATIC_URL = '/static/'

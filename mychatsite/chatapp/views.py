@@ -1,22 +1,10 @@
-import os
-import random
-import json
-
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
-from django.http import JsonResponse
-from django.core.mail import send_mail
-from smtplib import SMTPException
 
 
 # Create your views here.
 context = {}
-
-import logging
-
-logger = logging.getLogger(__name__)
-work_dir = os.path.dirname(os.path.realpath(__file__))
 
 # def index(request):
 #     msg = '박형식 홈페이지'
@@ -49,23 +37,17 @@ def popup_chat_home(request):
     }
     return HttpResponse(template.render(context, request))
 
-
 def call_chatbot(request):
     if request.method == 'POST':
         if request.is_ajax():
             userID = request.POST['user']
             sentence = request.POST['message']
-            #python은 unicode만을 허용한다
-            #bytesThing = sentence.encode(encoding='UTF-8')
-            #newStringThing = bytesThing.decode(encoding='UTF-8')
-            logger.debug("question[{}]".format(sentence))
-#            answer = clean_up_sentence(sentence)
-#             answer = bot.response(sentence, userID)
+            # logger.debug("question[{}]".format(sentence))
+            # answer = clean_up_sentence(sentence)
+            # answer = bot.response(sentence, userID)
             # answer = bot.get_answer(sentence, userID)
             answer = sentence
-            #bytesThing = answer.encode(encoding='UTF-8')
-            #newStringThing = bytesThing.decode(encoding='UTF-8')
-            logger.debug("answer[{}]".format(answer))
+            # logger.debug("answer[{}]".format(answer))
             return HttpResponse(answer)
      
     return render(request)
