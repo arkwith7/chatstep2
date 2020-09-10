@@ -40,7 +40,7 @@ def popup_chat_home(request):
 def call_chatbot(request):
     if request.method == 'POST':
         if request.is_ajax():
-            userID = request.POST['user']
+            # userID = request.POST['user']
             sentence = request.POST['message']
             # logger.debug("question[{}]".format(sentence))
             # answer = clean_up_sentence(sentence)
@@ -49,5 +49,4 @@ def call_chatbot(request):
             answer = sentence
             # logger.debug("answer[{}]".format(answer))
             return HttpResponse(answer)
-     
-    return render(request)
+    return ''
